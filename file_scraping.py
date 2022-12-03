@@ -19,4 +19,10 @@ data = {'csrf_token': token, 'username': 'noname', 'password': 'password'}
 
 result = work.post("http://quotes.toscrape.com/login", headers=headers, data=data, allow_redirects=True)
 
-print(result.text)
+soup_home = BeautifulSoup(result.text, 'lxml')
+data_div_all = soup_home.find('div', class_='quote')
+
+text = data_div_all.find('span', class_="text").text
+author = data_div_all.find('small', class_="author").text
+
+print(text + '\n' + author + '\n\n')
