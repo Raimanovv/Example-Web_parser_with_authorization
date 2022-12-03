@@ -31,14 +31,10 @@ def all_pages():
         i += 1
 
 
-def all_blog():
+def array():
     for i in all_pages():
         text = i.find('span', class_="text").text
         author = i.find('small', class_="author").text
-        aa = i.find_all('a')[1].get('href')
+        author_link = i.find_all('a')[1].get('href')
 
-        yield text + '\n' + author + '\n' + aa + '\n\n'
-
-
-for i in all_blog():
-    print(i)
+        yield author, text, author_link
