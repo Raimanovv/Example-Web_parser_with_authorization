@@ -16,18 +16,29 @@ token = soup.find('form').find('input').get('value')
 data = {'csrf_token': token, 'username': 'noname', 'password': 'password'}
 result = work.post("http://quotes.toscrape.com/login", headers=headers, data=data, allow_redirects=True)
 
-response_page = work.get("http://quotes.toscrape.com/page/1/", headers=headers)
-soup_page = BeautifulSoup(response_page.text, 'lxml')
-data_div_all = soup_page.find_all('div', class_='quote')
+
+def all_pages():
+    i = 1
+    while True:
+        response_page = work.get(f"http://quotes.toscrape.com/page/{i}/", headers=headers)
+        soup_page = BeautifulSoup(response_page.text, 'lxml')
+        data_div_all = soup_page.find_all('div', class_='quote')
+        if len(data_div_all) != 0:
+            for j in data_div_all:
+                yield j
+        else:
+            break
+        i += 1
 
 
-def all_blog(list_blogs):
-    for i in list_blogs:
+def all_blog():
+    for i in all_pages():
         text = i.find('span', class_="text").text
         author = i.find('small', class_="author").text
         aa = i.find_all('a')[1].get('href')
 
-        print(text + '\n' + author + '\n' + aa + '\n\n')
+        yield text + '\n' + author + '\n' + aa + '\n\n'
 
 
-all_blog(data_div_all)
+for i in all_blog():
+    print(i)
